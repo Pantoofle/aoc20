@@ -1,60 +1,48 @@
-use std::io;
-use std::{fs, io::BufRead};
+use aoc20::utils;
+use itertools::Itertools;
 
-pub fn exercice1(input: &str) -> u64 {
-    let file = fs::File::open(input).expect("Could not open file");
-    let mut entries: Vec<u64> = vec![];
+type MyResult<T> = std::result::Result<T, String>;
 
-    for line in io::BufReader::new(file).lines() {
-        if let Ok(data) = line {
-            entries.push(data.parse::<u64>().expect("Error parsing number"));
-        }
-    }
+fn main() -> MyResult<()> {
+    let input = utils::get_input().unwrap();
 
-    entries.sort();
-
-    let mut res: u64 = 0;
-    'base: for a in entries.iter() {
-        for b in entries.iter() {
-            if a + b == 2020 {
-                res = a * b;
-                break 'base;
-            } else if a + b > 2020 {
-                continue 'base;
-            }
-        }
-    }
-    res
+    println!("Exo 1: {}", exo1(&input)?);
+    println!("Exo 2: {}", exo2(&input)?);
+    Ok(())
 }
 
-pub fn exercice2(input: &str) -> u64 {
-    let file = fs::File::open(input).expect("Could not open file");
-    let mut entries: Vec<u64> = vec![];
-
-    for line in io::BufReader::new(file).lines() {
-        if let Ok(data) = line {
-            entries.push(data.parse::<u64>().expect("Error parsing number"));
-        }
-    }
+fn exo1(input: &String) -> MyResult<u64> {
+    let mut entries: Vec<u64> = input
+        .trim()
+        .split('\n')
+        .map(str::parse::<u64>)
+        .map(Result::unwrap)
+        .collect();
 
     entries.sort();
 
-    let mut res: u64 = 0;
-    'base: for a in entries.iter() {
-        'second: for b in entries.iter() {
-            if a + b > 2020 {
-                continue 'base;
-            }
-            for c in entries.iter() {
-                if a + b + c > 2020 {
-                    continue 'second;
-                }
-                if a + b + c == 2020 {
-                    res = a * b * c;
-                    break 'base;
-                }
-            }
+    for combi in entries.iter().combinations(2) {
+        if combi.iter().copied().sum::<u64>() == 2020 {
+            return Ok(combi[0] * combi[1]);
         }
     }
-    res
+    Err("No combination matches 2020".to_owned())
+}
+
+fn exo2(input: &String) -> MyResult<u64> {
+    let mut entries: Vec<u64> = input
+        .trim()
+        .split('\n')
+        .map(str::parse::<u64>)
+        .map(Result::unwrap)
+        .collect();
+
+    entries.sort();
+
+    for combi in entries.iter().combinations(3) {
+        if combi.iter().copied().sum::<u64>() == 2020 {
+            return Ok(combi[0] * combi[1] * combi[2]);
+        }
+    }
+    Err("No combination matches 2020".to_owned())
 }
