@@ -1,5 +1,5 @@
 [package]
-name    = "advent_of_code"
+name    = "aoc20"
 version = "0.1.0"
 authors = ["Simon Fernandez <simon.fernandez@ens-lyon.fr>"]
 edition = "2018"
