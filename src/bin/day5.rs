@@ -1,8 +1,8 @@
 use aoc20::utils::get_input;
 
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+type MyResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
-fn main() -> Result<()> {
+fn main() -> MyResult<()> {
     let input = get_input()?;
 
     println!("Exo 1: {}", exo1(&input)?);
@@ -10,12 +10,12 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn exo1(input: &String) -> Result<i64> {
+fn exo1(input: &String) -> MyResult<i64> {
     let values: Vec<i64> = input.trim().split('\n').map(compute_id).collect();
     Ok(values.iter().max().unwrap().to_owned())
 }
 
-fn exo2(input: &String) -> Result<i64> {
+fn exo2(input: &String) -> MyResult<i64> {
     let mut values: Vec<i64> = input.trim().split('\n').map(compute_id).collect();
     values.sort();
     let mut prev = values[0];
