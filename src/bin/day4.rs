@@ -1,7 +1,17 @@
 use regex::Regex;
 use std::i64;
-use std::io;
-use std::{fs, io::BufRead};
+
+use aoc20::utils::get_input;
+
+type MyResult<T> = std::result::Result<T, String>;
+
+fn main() -> MyResult<()> {
+    let input = get_input().unwrap();
+
+    println!("Exo 1: {}", exo1(&input)?);
+    println!("Exo 2: {}", exo2(&input)?);
+    Ok(())
+}
 
 fn check_fields(current: &Vec<String>) -> bool {
     let valid = vec!["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
@@ -112,56 +122,34 @@ fn check_passport(current: &Vec<(String, String)>) -> bool {
     res
 }
 
-pub fn exercice1(input: &str) -> u64 {
-    let file = fs::File::open(input).expect("Could not open file");
-
+pub fn exo1(input: &String) -> MyResult<u64> {
     let re = Regex::new(r"([a-z]*):[^ ]*").expect("Error creating regex");
-    let mut current: Vec<String> = vec![];
     let mut res = 0;
 
-    for line in io::BufReader::new(file).lines() {
-        if let Ok(data) = line {
-            if data.len() == 0 {
-                if check_fields(&current) {
-                    res += 1;
-                }
-                current = vec![];
-                continue;
-            }
-            for cap in re.captures_iter(data.as_str()) {
-                current.push(cap[1].to_owned());
-            }
+    for data in input.trim().split("\n\n") {
+        let fields: Vec<String> = re
+            .captures_iter(data.to_owned().replace('\n', " ").as_str())
+            .map(|c| c[1].to_owned())
+            .collect();
+        if check_fields(&fields) {
+            res += 1;
         }
     }
-    if check_fields(&current) {
-        res += 1;
-    }
-    res
+    Ok(res)
 }
 
-pub fn exercice2(input: &str) -> u64 {
-    let file = fs::File::open(input).expect("Could not open file");
-
+pub fn exo2(input: &String) -> MyResult<u64> {
     let re = Regex::new(r"([a-z]*):([^ ]*)").expect("Error creating regex");
-    let mut current: Vec<(String, String)> = vec![];
     let mut res = 0;
 
-    for line in io::BufReader::new(file).lines() {
-        if let Ok(data) = line {
-            if data.len() == 0 {
-                if check_passport(&current) {
-                    res += 1;
-                }
-                current = vec![];
-                continue;
-            }
-            for cap in re.captures_iter(data.as_str()) {
-                current.push((cap[1].to_owned(), cap[2].to_owned()));
-            }
+    for data in input.trim().split("\n\n") {
+        let fields: Vec<(String, String)> = re
+            .captures_iter(data.to_owned().replace('\n', " ").as_str())
+            .map(|c| (c[1].to_owned(), c[2].to_owned()))
+            .collect();
+        if check_passport(&fields) {
+            res += 1;
         }
     }
-    if check_passport(&current) {
-        res += 1;
-    }
-    res
+    Ok(res)
 }
