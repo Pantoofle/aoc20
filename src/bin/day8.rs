@@ -1,5 +1,5 @@
 use aoc20::utils::get_input;
-use std::{collections::HashSet, convert::TryInto};
+use std::collections::HashSet;
 
 type MyResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -33,9 +33,8 @@ fn exo2(input: &String) -> MyResult<i64> {
             continue;
         }
 
-        match run(&lines) {
-            Ok(res) => return Ok(res),
-            Err(res) => println!("Changing line {} failed with acc {}", l, res),
+        if let Ok(res) = run(&lines) {
+            return Ok(res);
         }
 
         let (_, ins, _) = lines.get_mut(l).unwrap();
