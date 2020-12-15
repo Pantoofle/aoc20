@@ -11,45 +11,52 @@ fn main() -> MyResult<()> {
     Ok(())
 }
 
-fn exo1(input: &String) -> MyResult<u64> {
-    let nums: Vec<u64> = input
+fn exo1(input: &String) -> MyResult<usize> {
+    let nums: Vec<usize> = input
         .trim()
         .lines()
         .next()
         .unwrap()
         .split(',')
-        .map(|v| v.parse::<u64>().unwrap())
+        .map(|v| v.parse::<usize>().unwrap())
         .collect();
 
     Ok(find_nth(nums, 2020))
 }
-fn exo2(input: &String) -> MyResult<u64> {
-    let nums: Vec<u64> = input
+fn exo2(input: &String) -> MyResult<usize> {
+    let nums: Vec<usize> = input
         .trim()
         .lines()
         .next()
         .unwrap()
         .split(',')
-        .map(|v| v.parse::<u64>().unwrap())
+        .map(|v| v.parse::<usize>().unwrap())
         .collect();
 
     Ok(find_nth(nums, 30000000))
 }
 
-fn find_nth(nums: Vec<u64>, n: usize) -> u64 {
-    let mut last_seen: HashMap<u64, usize> = HashMap::new();
+fn find_nth(nums: Vec<usize>, n: usize) -> usize {
+    let mut last_seen: Vec<Option<usize>> = Vec::with_capacity(1_000);
+    last_seen.resize(1_000, None);
     for (i, v) in nums[..nums.len() - 1].iter().enumerate() {
-        last_seen.insert(*v, i);
+        last_seen[*v] = Some(i);
     }
 
-    let mut next: u64 = *nums.last().unwrap();
+    let mut next: usize = *nums.last().unwrap();
 
     for i in (nums.len() - 1)..(n - 1) {
-        let future = match last_seen.get(&next) {
-            None => 0,
-            Some(j) => (i - j) as u64,
+        let future = match last_seen.get(next) {
+            None => {
+                last_seen.resize(2 * next, None);
+                0
+            }
+            Some(val) => match val {
+                None => 0,
+                Some(j) => (i - j),
+            },
         };
-        last_seen.insert(next, i);
+        last_seen[next] = Some(i);
         next = future;
     }
     next
