@@ -1,12 +1,11 @@
 use aoc20::utils::get_input;
-use std::collections::HashMap;
 
 type MyResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 fn main() -> MyResult<()> {
     let input = get_input()?;
 
-    println!("Exo 1: {}", exo1(&input)?);
+    // println!("Exo 1: {}", exo1(&input)?);
     println!("Exo 2: {}", exo2(&input)?);
     Ok(())
 }
